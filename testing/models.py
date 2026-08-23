@@ -5,9 +5,9 @@ from django.db import models
 # Create your models here.
 class TestSuite(models.Model):
     id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
+        primary_key=True, 
+        default=uuid.uuid4, 
+        editable=False
     )
 
     # We want to delete the test suite if the project is deleted, so we use CASCADE here
@@ -19,26 +19,26 @@ class TestSuite(models.Model):
     )
 
     name = models.CharField(
-        max_length = 150,
+        max_length = 150
     )
 
     description = models.TextField(
-        blank = True,
+        blank = True
     )
 
     # We don't want historical test suites to be deleted if the user is deleted, so we use PROTECT here
     created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
-        related_name="created_test_suites",
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.PROTECT, 
+        related_name="created_test_suites"
     )
 
     created_at = models.DateTimeField(
-        auto_now_add = True,
+        auto_now_add = True
     )
 
     updated_at = models.DateTimeField(
-        auto_now=True,
+        auto_now=True
     )
 
     class Meta:
@@ -54,24 +54,24 @@ class TestSuite(models.Model):
 
 class Tag(models.Model):
     id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
+        primary_key=True, 
+        default=uuid.uuid4, 
+        editable=False
     )
 
     # We want tags to be deleted if the project is deleted, so we use CASCADE here
     project = models.ForeignKey(
-        "projects.Project",
-        on_delete=models.CASCADE,
-        related_name="tags",
+        "projects.Project", 
+        on_delete=models.CASCADE, 
+        related_name="tags"
     )
 
     name = models.CharField(
-        max_length=50,
+        max_length=50
     )
 
     created_at = models.DateTimeField(
-        auto_now_add=True,
+        auto_now_add=True
     )
 
     class Meta:
@@ -98,64 +98,64 @@ class TestCase(models.Model):
         DEPRECATED = "DEPRECATED", "deprecated"
 
     id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
+        primary_key=True, 
+        default=uuid.uuid4, 
+        editable=False
     )
 
     # We want the test cases to be deleted if the test suite is deleted, so we use CASCADE here
     suite = models.ForeignKey(
-        TestSuite,
-        on_delete=models.CASCADE,
-        related_name="test_cases",
+        TestSuite, 
+        on_delete=models.CASCADE, 
+        related_name="test_cases"
     )
 
     tags = models.ManyToManyField(
-        Tag,
-        related_name="test_cases",
-        blank=True,
+        Tag, 
+        related_name="test_cases", 
+        blank=True
     )
 
     case_key = models.CharField(
-        max_length=20,
+        max_length=20
     )
 
     title = models.CharField(
-        max_length=150,
+        max_length=150
     )
 
     description = models.TextField(
-        blank=True,
+        blank=True
     )
 
     preconditions = models.TextField(
-        blank=True,
+        blank=True
     )
 
     steps = models.TextField(
-        blank=True,
+        blank=True
     )
 
     expected_results = models.TextField(
-        blank=True,
+        blank=True
     )
 
     priority = models.CharField(
-        max_length=10,
-        choices=Priority.choices,
-        default=Priority.MEDIUM,
+        max_length=10, 
+        choices=Priority.choices, 
+        default=Priority.MEDIUM
     )
 
     status = models.CharField(
-        max_length=15,
-        choices=Status.choices,
-        default=Status.DRAFT,
+        max_length=15, 
+        choices=Status.choices, 
+        default=Status.DRAFT
     )
 
     # We dont want historical test cases to be deleted if the user is deleted, so we use PROTECT here
     created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.PROTECT
     )
 
     created_at = models.DateTimeField(
