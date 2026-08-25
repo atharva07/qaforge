@@ -267,3 +267,80 @@ Our Implementation steps, as this project would be for learning purpose as well
                          ↓
                         Create first API
 
+
+                    QAForge API
+                         │
+           ┌─────────────┼─────────────┐
+           │             │             │
+        users         projects       testing
+           │             │             │
+           │             │             │
+       User/Auth      Project        TestSuite
+           │                         TestCase
+           │                         TestRun
+           │                         TestResult
+           │
+      RBAC / Roles
+           │
+           ▼
+      HasRole / IsAdmin
+           │
+     ┌─────┴──────┐
+     ▼            ▼
+  Projects      Testing
+
+# 11. API Collection Structure
+
+                         QAForge API
+                         │
+                         ├── Authentication
+                         │   └── DRF Login
+                         │
+                         ├── Users
+                         │   ├── Get Current User
+                         │   ├── List Users
+                         │   ├── Get User
+                         │   ├── Create User
+                         │   ├── Update User
+                         │   ├── Partial Update User
+                         │   └── Delete User
+                         │
+                         ├── Projects
+                         │   ├── List Projects
+                         │   ├── Create Project
+                         │   ├── Get Project
+                         │   ├── Update Project
+                         │   ├── Partial Update Project
+                         │   ├── Delete Project
+                         │   ├── Archive Project
+                         │   └── Execute Project
+                         │
+                         └── Testing
+                         │
+                         ├── Test Suites
+                         │   ├── List Test Suites
+                         │   ├── Create Test Suite
+                         │   ├── Get Test Suite
+                         │   ├── Update Test Suite
+                         │   ├── Partial Update Test Suite
+                         │   └── Delete Test Suite
+                         │
+                         ├── Test Cases
+                         │   ├── List Test Cases
+                         │   ├── Create Test Case
+                         │   ├── Get Test Case
+                         │   ├── Update Test Case
+                         │   ├── Partial Update Test Case
+                         │   ├── Delete Test Case
+                         │   └── Execute Test Case
+                         │
+                         ├── Test Runs
+                         │   ├── List Test Runs
+                         │   ├── Create Test Run
+                         │   ├── Get Test Run
+                         │   ├── Update Test Run
+                         │   └── Execute Test Run
+                         │
+                         └── Test Results
+                              ├── List Test Results
+                              └── Get Test Result

@@ -1,5 +1,6 @@
 from rest_framework.permissions import BasePermission
 from users.models import User
+from users.permissions import HasRole
 
 class ProjectPermission(BasePermission):
 
@@ -14,15 +15,32 @@ class ProjectPermission(BasePermission):
         if request.method in ["GET", "HEAD", "OPTIONS"]:
             return True
 
+        if request.user.role == User.Role.ADMIN:
+            return True
+
         return obj.created_by == request.user
 
-class IsQAEngineer(BasePermission):
-    """
-    Allows access only to QA Engineers
-    """
+class CanManageProjects(HasRole):
+    allowed_roles = [
+        User.Role.ADMIN,
+        User.Role.QA_ENGINEER
+    ]
 
-    def has_permission(self, request, view):
-        return (
-            request.user.is_authenticated
-            and request.user.role == User.Role.QA_ENGINEER
-        )
+class CanExecuteTests(HasRole):
+    allowed_roles =[
+        User.Role.QA_ENGINEER,
+        User.Role.ADMIN,
+        User.Role.DEVELOPER,
+    ]
+
+class CanManageTestCases(HasRole):
+    allowed_roles = [
+        User.Role.ADMIN,
+        User.Role.QA_ENGINEER,
+    ]
+
+class CanManageTestSuite(HasRole):
+    allowed_roles = [
+        User.Role.ADMIN,
+        User.Role.QA_ENGINEER,
+    ]

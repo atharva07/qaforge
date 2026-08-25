@@ -14,9 +14,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 from projects.views import ProjectViewSet
+from testing.views import TestSuiteViewSet, TestCaseViewSet, TestRunViewSet, TestResultViewSet
+from users.views import UserViewSet
 from rest_framework.routers import DefaultRouter
 # from projects.views import ProjectListCreateAPIView, ProjectDetailAPIView
 # from projects.views import ProjectListCreateView, ProjectDetailView, ProjectListCreateMixinView
@@ -27,6 +30,36 @@ router.register(
     "projects",
     ProjectViewSet,
     basename="project"
+)
+
+router.register(
+    r"test-suites",
+    TestSuiteViewSet,
+    basename="test-suite",
+)
+
+router.register(
+    r"test-cases",
+    TestCaseViewSet,
+    basename="test-case",
+)
+
+router.register(
+    r"test-runs",
+    TestRunViewSet,
+    basename="test-run",
+)
+
+router.register(
+    r"test-results",
+    TestResultViewSet,
+    basename="test-result",
+)
+
+router.register(
+    r"users",
+    UserViewSet,
+    basename="users"
 )
 
 urlpatterns = [

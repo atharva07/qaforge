@@ -19,7 +19,7 @@ class User(AbstractUser, PermissionsMixin):
         default=Role.VIEWER
     )
 
-    usrename = None
+    username = None
 
     id = models.UUIDField(
         primary_key=True,
