@@ -1,4 +1,6 @@
 from rest_framework import viewsets
+
+from users.models import User
 from .models import (
     TestSuite, TestCase, TestRun, TestResult
 )
@@ -15,8 +17,21 @@ from rest_framework.response import Response
 
 # Create your views here.
 class TestSuiteViewSet(viewsets.ModelViewSet):
-    queryset = TestSuite.objects.all()
+    # queryset = TestSuite.objects.all()
     serializer_class = TestSuiteSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if not user.is_authenticated:
+            return TestSuite.objects.none()
+
+        if user.role == User.Role.ADMIN:
+            return TestSuite.objects.all()
+
+        return TestSuite.objects.filter(
+            project__memberships__user = user
+        ).distinct()
 
     def get_permissions(self):
         if self.action == "list":
@@ -53,8 +68,21 @@ class TestSuiteViewSet(viewsets.ModelViewSet):
         )
 
 class TestCaseViewSet(viewsets.ModelViewSet):
-    queryset = TestCase.objects.all()
+    # queryset = TestCase.objects.all()
     serializer_class = TestCaseSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if not user.is_authenticated:
+            return TestCase.objects.none()
+
+        if user.role == User.Role.ADMIN:
+            return TestCase.objects.all()
+
+        return TestCase.objects.filter(
+            suite__project__memberships__user = user
+        ).distinct()
 
     def get_permissions(self):
         if self.action in [
@@ -113,8 +141,21 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         })
 
 class TestRunViewSet(viewsets.ModelViewSet):
-    queryset = TestRun.objects.all()
-    serializer_class = TestRunSerializer    
+    # queryset = TestRun.objects.all()
+    serializer_class = TestRunSerializer  
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if not user.is_authenticated:
+            return TestRun.objects.none()
+
+        if user.role == User.Role.ADMIN:
+            return TestRun.objects.all()
+
+        return TestRun.objects.filter(
+            suite__project__memberships__user = user
+        ).distinct()  
 
     def get_permissions(self):
         if self.action in [
@@ -175,7 +216,20 @@ class TestRunViewSet(viewsets.ModelViewSet):
         })
 
 class TestResultViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = TestResult.objects.all()
+    # queryset = TestResult.objects.all()
+    def get_queryset(self):
+        user = self.request.user
+
+        if not user.is_authenticated:
+            return TestResult.objects.none()
+
+        if user.role == User.Role.ADMIN:
+            return TestResult.objects.all()
+
+        return TestResult.objects.filter(
+            test_run__suite__project__memberships__user = user
+        ).distinct()
+    
     serializer_class = TestResultSerializer
     permission_classes = [
         TestResultPermission
