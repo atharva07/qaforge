@@ -1,10 +1,8 @@
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from .models import Project
 from .serializers import ProjectSerializer
 from users.models import User
-from rest_framework import status
-from rest_framework import generics, mixins, viewsets
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from .permissions import ProjectPermission
@@ -12,8 +10,24 @@ from .permissions import CanExecuteTests, CanManageProjects
 
 # Create your views here.
 class ProjectViewSet(viewsets.ModelViewSet):
-    queryset = Project.objects.all()
+    # queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+
+        # If not authenticated, nothing will return
+        if not user.is_authenticated:
+            return Project.objects.none()
+
+        # Id Admin, it will return all objects
+        if user.role == User.Role.ADMIN:
+            return Project.objects.all()
+
+        # else it will return based on the membership
+        return Project.objects.filter(
+            memberships__user=user
+        ).distinct()
 
     def get_permissions(self):
         if self.action == "list":

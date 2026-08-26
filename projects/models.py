@@ -42,6 +42,10 @@ class Project(models.Model):
         return f"{self.key} - {self.name}"
 
 class ProjectMembership(models.Model):
+    class Role(models.TextChoices):
+        OWNER = "OWNER", "Owner"
+        MEMBER = "MEMBER", "Member"
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -62,7 +66,13 @@ class ProjectMembership(models.Model):
         related_name="memberships",
     )
 
-    joined_at = models.DateTimeField(
+    role = models.CharField(
+        max_length=10,
+        choices=Role.choices,
+        default=Role.MEMBER,
+    )
+
+    created_at = models.DateTimeField(
         auto_now_add=True,
     )
 
@@ -72,7 +82,7 @@ class ProjectMembership(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields = ["user", "project"],
+                fields = ["project", "user"],
                 name = "unique_project_membership",
             ),
         ]

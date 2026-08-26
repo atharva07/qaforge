@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.db import models
 
 # user = username="atharva123", email="atharva123@gmail.com", password="TestAdmin"
-# user2 = username="johnwick"m email="johnwick@gmail.com", password="JohnAdmin"
+# user2 = username="johnwick" email="johnwick@gmail.com", password="JohnAdmin"
 # Create your models here.
 class User(AbstractUser, PermissionsMixin):
 
