@@ -29,9 +29,22 @@ class TestSuiteViewSet(viewsets.ModelViewSet):
         if user.role == User.Role.ADMIN:
             return TestSuite.objects.all()
 
-        return TestSuite.objects.filter(
-            project__memberships__user = user
-        ).distinct()
+        queryset = (
+            TestSuite.objects
+            .select_related(
+                "project",
+                "created_by",
+            )
+            .prefetch_related(
+                "test_cases"
+            )
+        )
+
+        return (
+            queryset.filter(
+                project__memberships__user=user
+            ).distinct()
+        )
 
     def get_permissions(self):
         if self.action == "list":
@@ -80,9 +93,20 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         if user.role == User.Role.ADMIN:
             return TestCase.objects.all()
 
-        return TestCase.objects.filter(
-            suite__project__memberships__user = user
-        ).distinct()
+        queryset = (
+            TestCase.objects
+            .select_related(
+                "suite",
+                "suite__project",
+                "created_by",
+            )
+        )
+
+        return (
+            queryset.filter(
+                suite__project__memberships__user=user
+            ).distinct()
+        )
 
     def get_permissions(self):
         if self.action in [
@@ -153,9 +177,18 @@ class TestRunViewSet(viewsets.ModelViewSet):
         if user.role == User.Role.ADMIN:
             return TestRun.objects.all()
 
-        return TestRun.objects.filter(
-            suite__project__memberships__user = user
-        ).distinct()  
+        queryset = (
+            TestRun.objects
+            .select_related(
+                "suite",
+                "suite__project",
+                "created_by"
+            )
+        )
+
+        return queryset.filter(
+            suite__project__memberships__user=user
+        ).distinct()
 
     def get_permissions(self):
         if self.action in [
@@ -226,8 +259,20 @@ class TestResultViewSet(viewsets.ReadOnlyModelViewSet):
         if user.role == User.Role.ADMIN:
             return TestResult.objects.all()
 
-        return TestResult.objects.filter(
-            test_run__suite__project__memberships__user = user
+        queryset = (
+            TestResult.objects
+            .select_related(
+                "test_run",
+                "test_run__suite",
+                "test_run__suite__project",
+                "test_case",
+                "test_case__suite",
+                "test_case__suite__project"
+            )
+        )
+
+        return queryset.filter(
+            test_run__suite__project__memberships__user=user
         ).distinct()
     
     serializer_class = TestResultSerializer
