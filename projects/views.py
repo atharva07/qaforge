@@ -1,12 +1,13 @@
 from rest_framework.response import Response
 from .models import Project
-from .serializers import ProjectSerializer
+from .serializers import ProjectSerializer, ProjectTestReportSerializer
 from users.models import User
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from .permissions import ProjectPermission
 from .permissions import CanExecuteTests, CanManageProjects
+from .services import get_project_test_report
 
 # Create your views here.
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -103,3 +104,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
             "is_staff": request.user.is_staff,
             "is_superuser": request.user.is_superuser,
         })
+
+    @action(detail=True, methods=["get"], url_path="report")
+    def report(self, request, pk=None):
+        project = self.get_object()
+
+        report = get_project_test_report(project)
+
+        serializer = ProjectTestReportSerializer(report)
+
+        return Response(
+            serializer.data
+        )

@@ -43,3 +43,15 @@ class ProjectSerializer(serializers.ModelSerializer):
             )
 
         return value
+
+class ProjectTestReportSerializer(serializers.Serializer):
+    project = serializers.CharField()
+    total_results = serializers.IntegerField()
+    passed = serializers.IntegerField()
+    failed = serializers.IntegerField()
+    skipped = serializers.IntegerField()
+    blocked = serializers.IntegerField()
+    average_duration = serializers.FloatField(
+        allow_null=True
+    )
+    pass_rate = serializers.FloatField()
